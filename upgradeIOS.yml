@@ -1,0 +1,39 @@
+---
+- name: upgrade IOS
+  hosts: "ios_devices"
+  strategy: free
+  gather_facts: false
+  connection: local
+
+  vars:
+    modelos:
+      WS-C2960S-48LPS-L:
+        versao: 15.2(2)E9
+        arquivo: c2960s-universalk9-tar.152-2.E9.tar
+      WS-C2960X-48LPS-L:
+        versao: 15.2(4)E8
+        arquivo: c2960x-universalk9-tar.152-4.E8.tar
+
+  vars_prompt:
+    - name: "ansible_user"
+      prompt: "Usuario "
+    - name: "ansible_ssh_pass"
+      prompt: "Senha "
+
+  tasks:
+    - name: coleta de FACTS
+      ios_facts:
+
+    - name: upgrading IOS
+      ios_command:
+        commands:
+          - wr
+          - archive download-sw /overwrite ftp://{{ IP_FTP }}/{{ item.value.arquivo }}
+          - command: reload at {{ reload_time | default('00:00') }}
+            prompt: '[confirm]'
+            answer: "\r"
+      vars:
+        ansible_command_timeout: 1200
+
+      loop: "{{ lookup('dict',modelos) }}"
+      when: ansible_net_model  == item.key and ansible_net_version != item.value.versao

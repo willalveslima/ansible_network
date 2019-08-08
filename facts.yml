@@ -1,0 +1,19 @@
+---
+- name: netwok facts
+  hosts: "ios_devices"
+  gather_facts: false
+  connection: local
+
+  vars_prompt:
+    - name: "ansible_user"
+      prompt: "Usuario: "
+    - name: "ansible_ssh_pass"
+      prompt: "Senha: "
+
+  tasks:
+    - name: Gathering facts via ios_facts module
+      ios_facts:
+
+    - name: display
+      debug:
+        var: hostvars

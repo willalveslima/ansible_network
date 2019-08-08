@@ -1,0 +1,28 @@
+---
+- name: Backup de configurações
+  hosts: "all"
+  gather_facts: false
+  connection: local
+
+  vars_prompt:
+    - name: "ansible_user"
+      prompt: "Usuario: "
+    - name: "ansible_ssh_pass"
+      prompt: "Senha: "
+
+  tasks:
+    - name: backup config ios
+      ios_config:
+        backup: yes
+        backup_options:
+          dir_path: ~/ansible_mansp
+          filename: "{{ inventory_hostname }}.config"
+      when: ansible_network_os == 'ios'
+
+    - name: backup config nxos
+      nxos_config:
+        backup: yes
+        backup_options:
+          dir_path: ~/ansible_mansp
+          filename: "{{ inventory_hostname }}.config"
+      when: ansible_network_os == 'nxos'
