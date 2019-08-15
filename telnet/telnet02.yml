@@ -1,0 +1,23 @@
+---
+- name: telnet
+  hosts: "all"
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+  - name: run show commands
+    telnet:
+      user: ansible
+      password: ansible
+      login_prompt: "Username: "
+      prompts:
+        - "[>#]"
+      command:
+        - config t
+        - hostname {{ inventory_hostname }}
+    register: output
+
+  - name: display
+    debug:
+      var: output

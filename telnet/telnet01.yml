@@ -1,0 +1,23 @@
+---
+- name: telnet
+  hosts: "all"
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+  - name: run show commands
+    telnet:
+      user: lab
+      password: lab
+      login_prompt: "Username: "
+      prompts:
+        - "[>#]"
+      command:
+        - terminal length 0
+        - show version
+    register: output
+
+  - name: display
+    debug:
+      var: output

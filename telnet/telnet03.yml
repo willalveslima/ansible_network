@@ -1,0 +1,21 @@
+---
+- name: telnet
+  hosts: "all"
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+  - name: run show commands
+    telnet:
+      user: ansible
+      password: ansible
+      login_prompt: "Username: "
+      prompts:
+        - "[>#]"
+      command: "{{ lookup('file','hostname.txt') }}"
+    register: output
+
+  - name: display
+    debug:
+      var: output
